@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  redirect("/dashbaord");
+  redirect("/dashboard");
 
   return <div>Redirecting...</div>;
 }

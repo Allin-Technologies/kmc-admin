@@ -73,6 +73,10 @@ export async function getCollectionList(params: Params): Promise<{
         headers: {
           Authorization: `Bearer ${session?.user?.access_token}`,
         },
+        params: {
+          limit: params.pagination.pageSize,
+          skip: params.pagination.pageIndex * (params.pagination.pageSize || 24),
+        }
       }
     );
 
@@ -91,6 +95,95 @@ export async function getCollectionList(params: Params): Promise<{
         items: null,
         total: 0,
       },
+      status: false,
+      message: "An unexpected error occured!",
+    };
+  }
+}
+
+export async function getTicket(params: { _id: string }): Promise<{
+  data?: Registration;
+  status: boolean;
+  message: string;
+}> {
+  const session = await auth();
+
+  if (!session || !session.user || session.user.role !== "admin") {
+    return {
+      status: false,
+      message: "Unauthorized access to specified resource!",
+    };
+  }
+
+  try {
+    const response = await api(
+      z.any(),
+      {
+        url: `/admin/collection/registration/${params._id}`,
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${session?.user?.access_token}`,
+        },
+      }
+    );
+
+    console.log(response)
+
+    return {
+      data: response?.data as any,
+      status: response?.response_code == 200,
+      message:
+        response?.response_code == 200
+          ? `Entry retrieved sucessfully`
+          : response?.message ?? "Something went wrong",
+    };
+  } catch (error) {
+    console.error(`Error requestingcheck in for ticket ${params._id}`, error);
+    return {
+      status: false,
+      message: "An unexpected error occured!",
+    };
+  }
+}
+
+
+export async function updateCheckinStatus(params: { _id: string }): Promise<{
+  data?: Registration;
+  status: boolean;
+  message: string;
+}> {
+  const session = await auth();
+
+  if (!session || !session.user || session.user.role !== "admin") {
+    return {
+      status: false,
+      message: "Unauthorized access to specified resource!",
+    };
+  }
+
+  try {
+    const response = await api(
+      z.any(),
+      {
+        url: `/admin/check-in/${params._id}`,
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${session?.user?.access_token}`,
+        },
+      }
+    );
+
+    return {
+      data: response?.data as any,
+      status: response?.response_code == 200,
+      message:
+        response?.response_code == 200
+          ? `Checked in sucessfully`
+          : response?.message ?? "Something went wrong",
+    };
+  } catch (error) {
+    console.error(`Error requestingcheck in for ticket ${params._id}`, error);
+    return {
       status: false,
       message: "An unexpected error occured!",
     };

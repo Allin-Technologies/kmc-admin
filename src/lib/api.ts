@@ -64,7 +64,7 @@ export async function api<T>(
       if (errorDetails) {
         const errorDetailsJson = JSON.parse(errorDetails);
         if (errorDetailsJson && errorDetailsJson?.message)
-          throw new Error("An erro occured", {
+          throw new Error(errorDetailsJson?.message || "An error occured", {
             cause: errorDetailsJson,
           });
       }

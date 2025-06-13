@@ -9,7 +9,7 @@ export default async function Layout({
   const session = await auth();
 
   if (session) {
-    redirect("/dashbaord");
+    redirect("/dashboard");
   }
 
   return <>{children}</>;

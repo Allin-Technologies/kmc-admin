@@ -7,6 +7,8 @@ import SponsorDialog from "./dialogs/sponsor";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import VolunteerDialog from "./dialogs/volunteer";
+import { updateCheckinStatus } from "@/actions/admin/collection";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const regColumns: ColumnDef<Registration>[] = [
   {
@@ -35,38 +37,44 @@ export const regColumns: ColumnDef<Registration>[] = [
     },
   },
   {
-    accessorKey: "checked_in",
-    header: "Checked in",
-    cell({ row }) {
-      const value = row.original.checked_in;
+  accessorKey: "checked_in",
+  header: "Checked in",
+  cell({ row }) {
+    const value = row.original.checked_in;
+    const _id = row.original._id;
 
-      if (value === false)
-        return (
-          <div className='h-6 px-2 py-1 bg-[#fbeae9] rounded-xl flex-col justify-center items-center gap-2 inline-flex'>
-            <div className='justify-center items-center inline-flex'>
-              <div className='px-1 justify-center items-center flex'>
-                <span className='text-center text-[#d3251f] text-xs font-medium'>
-                  No
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-      else if (value == true)
-        return (
-          <div className='h-6 px-2 py-1 bg-[#e7f6ec] rounded-xl flex-col justify-center items-center gap-2 inline-flex'>
-            <div className='justify-center items-center inline-flex'>
-              <div className='px-1 justify-center items-center flex'>
-                <span className='text-center text-[#036b26] text-xs font-medium'>
-                  Yes
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-      else return <span>-</span>;
-    },
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+      mutationFn: () => updateCheckinStatus({ _id }),
+      onSuccess: () => {
+        queryClient.invalidateQueries(); // optionally pass the correct query key
+      },
+    });
+
+    if (value === false) {
+      return (
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+            className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+          >
+            {mutation.isPending ? "..." : "Check In"}
+          </button>
+        </div>
+      );
+    } else if (value === true) {
+      return (
+        <div className="h-6 px-2 py-1 bg-[#e7f6ec] rounded-xl inline-flex items-center">
+          <span className="text-[#036b26] text-xs font-medium">Yes</span>
+        </div>
+      );
+    } else {
+      return <span>-</span>;
+    }
   },
+}
+
 ];
 
 export const volunteerColumns: ColumnDef<Volunteer>[] = [

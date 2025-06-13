@@ -39,6 +39,7 @@
     "crypto": "^1.0.1",
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
+    "html5-qrcode": "^2.3.8",
     "input-otp": "^1.4.2",
     "little-date": "^1.0.0",
     "lucide-react": "^0.475.0",

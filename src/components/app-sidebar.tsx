@@ -60,11 +60,11 @@ const data = {
       items: [
         {
           title: "Search",
-          url: "#",
+          url: "/dashboard/check-in/search",
         },
         {
           title: "Scan",
-          url: "#",
+          url: "/dashboard/check-in/scan",
         },
       ],
     },
