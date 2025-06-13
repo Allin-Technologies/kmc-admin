@@ -10,6 +10,8 @@ import { z } from "zod";
 interface Params {
   collection: "registration" | "sponsor" | "volunteer";
   pagination: PaginationState;
+  filter?: string;
+  sort?: string;
 }
 
 export interface BaseResponse<T> {
@@ -76,6 +78,8 @@ export async function getCollectionList(params: Params): Promise<{
         params: {
           limit: params.pagination.pageSize,
           skip: params.pagination.pageIndex * (params.pagination.pageSize || 24),
+          filter: params.filter ? params.filter : undefined,
+          sort: params.sort ? params.sort : undefined,
         }
       }
     );
